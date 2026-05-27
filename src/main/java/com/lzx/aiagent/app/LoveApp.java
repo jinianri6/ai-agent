@@ -11,6 +11,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,9 @@ public class LoveApp {
 
     @Resource
     private Advisor loveAppRagCloudAdvisor;
+
+    @Resource
+    private ToolCallback[] allTools;
 
     private final ChatClient chatClient;
 
@@ -90,6 +94,19 @@ public class LoveApp {
                 .advisors(new QuestionAnswerAdvisor(loveAppVectorStore))
                 // 应用 RAG 检索增强服务（基于云知识库服务）
                 //.advisors(loveAppRagCloudAdvisor)
+                .call().chatResponse();
+        String text = chatResponse.getResult().getOutput().getText();
+        log.info("text: {}",text);
+        return text;
+    }
+
+    //AI调用工具
+    public String doChatWithTool(String message, String chatId){
+        ChatResponse chatResponse = chatClient.prompt()
+                .user(message)
+                .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .advisors(new MyLoggerAdvisor())
+                .tools(allTools)
                 .call().chatResponse();
         String text = chatResponse.getResult().getOutput().getText();
         log.info("text: {}",text);

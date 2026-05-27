@@ -31,3 +31,5 @@ knife4j:
 logging:
   level:
     org.springframework.ai: DEBUG
+serach-api:
+  api-key:

@@ -8,7 +8,7 @@ import org.springframework.ai.tool.annotation.ToolParam;
 public class FileOperationTool {
     private final String fileDir = FileConstant.FILE_SAVE_DIR + "/file";
 
-    @Tool
+    @Tool(description = "Read content from a file")
     public String readFile(@ToolParam(description = "the file name") String fileName){
         if (!FileUtil.exist(fileDir + "/" + fileName)){
             return "the file not exist";
@@ -20,7 +20,7 @@ public class FileOperationTool {
         }
     }
 
-    @Tool
+    @Tool(description = "Write content to a file")
     public String writeFile(@ToolParam(description = "the file name") String fileName, @ToolParam(description = "the file content") String content){
         try {
             FileUtil.writeUtf8String(content, fileDir + "/" + fileName);

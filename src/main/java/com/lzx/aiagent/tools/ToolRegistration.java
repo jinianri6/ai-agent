@@ -19,13 +19,11 @@ public class ToolRegistration {
         WebScrapingTool webScrapingTool = new WebScrapingTool();
         PDFGenerationTool pdfGenerationTool = new PDFGenerationTool();
         ResourceDownloadTool resourceDownloadTool = new ResourceDownloadTool();
+        TerminateTool terminateTool = new TerminateTool();
+
         return ToolCallbacks.from(
-                webSearchTool,
-                fieOperationTool,
-                terminalOperationTool,
-                webScrapingTool,
                 pdfGenerationTool,
-                resourceDownloadTool
+                terminateTool
         );
     }
 }

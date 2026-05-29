@@ -2,10 +2,12 @@ package com.lzx.aiagent.tools;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 
 
 public class WebScrapingTool {
+    @Tool(description = "Scrape the content of a web page")
     public String scrapeWeb(@ToolParam(description = "URL to scrape") String url) {
         try{
             Document doc = Jsoup.connect(url).get();

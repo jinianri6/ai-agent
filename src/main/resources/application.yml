@@ -7,10 +7,10 @@ spring:
       chat:
         options:
           model: qwen-plus
-    mcp:
-      client:
-        stdio:
-          servers-configuration: classpath:mcp-servers.json
+#    mcp:
+#      client:
+#        stdio:
+#          servers-configuration: classpath:mcp-servers.json
 server:
   port: 8123
   servlet:
@@ -35,5 +35,5 @@ knife4j:
 logging:
   level:
     org.springframework.ai: DEBUG
-serach-api:
+search-api:
   api-key:

@@ -16,13 +16,17 @@ import java.util.List;
 public class LoveAppVectorStoreConfig {
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
+    @Resource
+    private MyKeywordEnricher myKeywordEnricher;
 
     @Bean
     public VectorStore loveAppVectorStore(EmbeddingModel dashscopeEmbeddingModel) {
         SimpleVectorStore vectorStore = SimpleVectorStore.builder(dashscopeEmbeddingModel).build();
         //加载文档
         List<Document> documents = loveAppDocumentLoader.loadDocument();
-        vectorStore.add(documents);
+        //自主补充元信息
+        List<Document> enrichedDocuments  = myKeywordEnricher.enrichDocument(documents);
+        vectorStore.add(enrichedDocuments);
         return vectorStore;
     }
 }

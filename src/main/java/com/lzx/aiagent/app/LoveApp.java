@@ -2,6 +2,8 @@ package com.lzx.aiagent.app;
 
 import com.lzx.aiagent.advisor.MyLoggerAdvisor;
 import com.lzx.aiagent.chatMemory.FileBasedChatMemory;
+import com.lzx.aiagent.rag.LoveAppRagCustomAdvisorFactory;
+import com.lzx.aiagent.rag.QueryReWrite;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -30,6 +32,9 @@ public class LoveApp {
 
     @Resource
     private ToolCallback[] allTools;
+    
+    @Resource
+    private QueryReWrite queryReWrite;
 
     private final ChatClient chatClient;
 
@@ -105,13 +110,20 @@ public class LoveApp {
      * @return
      */
     public String doChatWithRag(String message, String chatId){
+        String reMessage = queryReWrite.doQueryRewrite(message); //查询重写
         ChatResponse chatResponse = chatClient.prompt()
-                .user(message)
+                .user(reMessage)
                 .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
                 // 应用 RAG 知识库问答
                 .advisors(new QuestionAnswerAdvisor(loveAppVectorStore))
                 // 应用 RAG 检索增强服务（基于云知识库服务）
                 //.advisors(loveAppRagCloudAdvisor)
+                // 应用自定义的 RAG 检索增强服务（文档查询器 + 上下文增强器）
+                /*.advisors(
+                        LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomAdvisor(
+                                loveAppVectorStore, "单身"
+                        )
+                )*/
                 .call().chatResponse();
         String text = chatResponse.getResult().getOutput().getText();
         log.info("text: {}",text);
